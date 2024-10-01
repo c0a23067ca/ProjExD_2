@@ -49,24 +49,24 @@ def main():
     accs = [a for a in range(1, 11)]
     bb_imgs=[]
     bb_rcts=[]
-    for r in range(1, 11):
+    for r in range(1, 11):                                       #拡大のために大きくしていく
          bb_img = pg.Surface((20*r, 20*r))
          pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)
          bb_imgs.append(bb_img)
          bb_img.set_colorkey((0,0,0))
-         bb_rcts.append(bb_img.get_rect())
+         bb_rcts.append(bb_img.get_rect())                       #リストに追加
     #pg.draw.circle(bb_img,(255,0,0),(10,10),10)
     #bb_rct = bb_imgs[0].get_rect()
     bb_rcts[0].center = random.randint(0,WIDTH),random.randint(0,HEIGHT)
     vx,vy = 5,5
-    go_img = pg.Surface((WIDTH,HEIGHT))
+    go_img = pg.Surface((WIDTH,HEIGHT))                 #game over時の表示のsurface
     go_img.set_alpha(100)
     go_rct = go_img.get_rect()
     go_rct.center = WIDTH/2,HEIGHT/2
     go_txt = fonto.render("Game Over", True, (255,255,255))
     txt_rct = go_txt.get_rect()
     txt_rct.center = WIDTH/2,HEIGHT/2
-    cry_img = pg.transform.rotozoom(pg.image.load("fig/8.png"), 0, 0.9)
+    cry_img = pg.transform.rotozoom(pg.image.load("fig/8.png"), 0, 0.9)  #泣いているこうかとんの画像読み込み
     cry_rct1= cry_img.get_rect()
     cry_rct2 = cry_img.get_rect()
     cry_rct1.center = WIDTH/2-200,HEIGHT/2
@@ -79,7 +79,7 @@ def main():
             if event.type == pg.QUIT: 
                 return
         screen.blit(bg_img, [0, 0]) 
-        if kk_rct.colliderect(bb_rcts[min(tmr//500, 9)]):
+        if kk_rct.colliderect(bb_rcts[min(tmr//500, 9)]):       #こうかとんと爆弾が衝突したら
             screen.blit(go_img,go_rct)
             screen.blit(go_txt,txt_rct)
             screen.blit(cry_img,cry_rct1)
