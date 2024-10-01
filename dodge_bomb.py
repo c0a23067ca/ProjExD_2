@@ -13,6 +13,15 @@ DELTA={
         pg.K_RIGHT:(5,0)
         }
 
+def bomb(lst1,lst2,count):
+    """
+    引数：リスト、リスト、インデックス
+    戻り値　タプル（１つ目のリストからインデックスで取り出した値、２つ目のリストからインデックスで取り出した値）
+    """
+
+    return lst1[count],lst2[count]
+
+
 def check_bound(obj_rct: pg.Rect) -> tuple[bool,bool]:
     """
     引数：こうかとん　または　爆弾のRect
@@ -35,11 +44,20 @@ def main():
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
-    bb_img = pg.Surface((20,20))
-    bb_img.set_colorkey((0,0,0))
-    pg.draw.circle(bb_img,(255,0,0),(10,10),10)
-    bb_rct = bb_img.get_rect()
-    bb_rct.center = random.randint(0,WIDTH),random.randint(0,HEIGHT)
+    #bb_img = pg.Surface((20,20))
+    
+    accs = [a for a in range(1, 11)]
+    bb_imgs=[]
+    bb_rcts=[]
+    for r in range(1, 11):
+         bb_img = pg.Surface((20*r, 20*r))
+         pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)
+         bb_imgs.append(bb_img)
+         bb_img.set_colorkey((0,0,0))
+         bb_rcts.append(bb_img.get_rect())
+    #pg.draw.circle(bb_img,(255,0,0),(10,10),10)
+    #bb_rct = bb_imgs[0].get_rect()
+    bb_rcts[0].center = random.randint(0,WIDTH),random.randint(0,HEIGHT)
     vx,vy = 5,5
     go_img = pg.Surface((WIDTH,HEIGHT))
     go_img.set_alpha(100)
@@ -61,7 +79,7 @@ def main():
             if event.type == pg.QUIT: 
                 return
         screen.blit(bg_img, [0, 0]) 
-        if kk_rct.colliderect(bb_rct):
+        if kk_rct.colliderect(bb_rcts[min(tmr//500, 9)]):
             screen.blit(go_img,go_rct)
             screen.blit(go_txt,txt_rct)
             screen.blit(cry_img,cry_rct1)
@@ -69,6 +87,11 @@ def main():
             pg.display.update()
             time.sleep(5)
             return
+        bb_rcts[min(tmr//500, 9)+1][0] = bb_rcts[min(tmr//500, 9)][0]
+        bb_rcts[min(tmr//500, 9)+1][1] = bb_rcts[min(tmr//500, 9)][1]
+        avx = vx*accs[min(tmr//500, 9)]
+        bb_img = bb_imgs[min(tmr//500, 9)]
+        screen.blit(bb_img, bb_rcts[min(tmr//500, 9)])
 
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
@@ -90,13 +113,13 @@ def main():
         if check_bound(kk_rct) != (True,True):
              kk_rct.move_ip(-sum_mv[0],-sum_mv[1])
         screen.blit(kk_img, kk_rct)
-        bb_rct.move_ip(vx,vy)
-        yoko,tate = check_bound(bb_rct)
+        bb_rcts[min(tmr//500, 9)].move_ip(avx,vy)
+        yoko,tate = check_bound(bb_rcts[min(tmr//500, 9)])
         if not yoko:
              vx *= -1
         if not tate:
              vy *= -1
-        screen.blit(bb_img, bb_rct)
+        
         pg.display.update()
         tmr += 1
         clock.tick(50)
