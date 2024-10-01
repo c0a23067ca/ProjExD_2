@@ -2,7 +2,7 @@ import os
 import sys
 import pygame as pg
 import random
-
+import time
 
 WIDTH, HEIGHT = 1100, 650
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -30,6 +30,7 @@ def check_bound(obj_rct: pg.Rect) -> tuple[bool,bool]:
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
+    fonto = pg.font.Font(None,80)
     bg_img = pg.image.load("fig/pg_bg.jpg")    
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
     kk_rct = kk_img.get_rect()
@@ -40,6 +41,18 @@ def main():
     bb_rct = bb_img.get_rect()
     bb_rct.center = random.randint(0,WIDTH),random.randint(0,HEIGHT)
     vx,vy = 5,5
+    go_img = pg.Surface((WIDTH,HEIGHT))
+    go_img.set_alpha(100)
+    go_rct = go_img.get_rect()
+    go_rct.center = WIDTH/2,HEIGHT/2
+    go_txt = fonto.render("Game Over", True, (255,255,255))
+    txt_rct = go_txt.get_rect()
+    txt_rct.center = WIDTH/2,HEIGHT/2
+    cry_img = pg.transform.rotozoom(pg.image.load("fig/8.png"), 0, 0.9)
+    cry_rct1= cry_img.get_rect()
+    cry_rct2 = cry_img.get_rect()
+    cry_rct1.center = WIDTH/2-200,HEIGHT/2
+    cry_rct2.center = WIDTH/2+200,HEIGHT/2
     clock = pg.time.Clock()
     tmr = 0
 
@@ -49,6 +62,12 @@ def main():
                 return
         screen.blit(bg_img, [0, 0]) 
         if kk_rct.colliderect(bb_rct):
+            screen.blit(go_img,go_rct)
+            screen.blit(go_txt,txt_rct)
+            screen.blit(cry_img,cry_rct1)
+            screen.blit(cry_img,cry_rct2)
+            pg.display.update()
+            time.sleep(5)
             return
 
         key_lst = pg.key.get_pressed()
